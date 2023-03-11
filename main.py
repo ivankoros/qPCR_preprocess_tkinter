@@ -40,10 +40,15 @@ class Application(tk.Frame):
     def upload_sample1_file(self):
         filename = filedialog.askopenfilename()
         self.sample1_filename = filename
+        if self.sample1_filename:
+            self.upload1_button["text"] = self.sample1_filename
 
     def upload_sample2_file(self):
         filename = filedialog.askopenfilename()
         self.sample2_filename = filename
+        if self.sample2_filename:
+            self.upload2_button["text"] = self.sample2_filename
+
 
     def run_script(self):
         try:
@@ -54,14 +59,6 @@ class Application(tk.Frame):
             # Read in the raw data and plate diagram as pandas dataframes
             df_data = pd.read_excel(RAW_SAMPLE_1, sheet_name=0)
             df_diagram = pd.read_excel(RAW_SAMPLE_1_DIAGRAM)
-
-            if len(df_data) != 0:
-                self.upload1_button["state"] = "disabled"
-                self.upload1_button["text"] = "Uploaded"
-
-            if len(df_diagram) != 0:
-                self.upload2_button["state"] = "disabled"
-                self.upload2_button["text"] = "Uploaded"
 
             # Set the first column as the index, remove whitespace and add a space to the "dup" values
             df_diagram = df_diagram.set_index(df_diagram.columns[0])
