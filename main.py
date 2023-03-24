@@ -78,7 +78,7 @@ class Application(tk.Frame):
             # Read in the raw qPCR data and map the well IDs to sample names using the dictionary
             df_data["Sample"] = df_data["Well"].map(sample_map)
 
-            df = df_data[['Well', 'Cq', 'Sample']]
+            df = df_data[['Well', 'Cq', 'Sample']].copy()
 
             df['mtDNA1'] = "mtDNA1"
             df['mtDNA2'] = "mtDNA2"
@@ -91,6 +91,7 @@ class Application(tk.Frame):
             # as the Cq for the duplicate sample if it exists as "Sample dup"
 
             for row, index in df.iterrows():
+                df.loc[row, 'mtDNA1'] = df.loc[row, 'Cq']
                 if df.loc[row, 'Sample'] + ' dup' in df['Sample'].values:
                     df.loc[row, 'mtDNA2'] = df.loc[df['Sample'] == df.loc[row, 'Sample'] + ' dup', 'Cq'].values[0]
                 else:
@@ -123,9 +124,16 @@ class Application(tk.Frame):
             self.status_label["text"] = f"Error: {str(e)}"
 
     def download_output_file(self):
-        filename = "output.xlsx"
-        if os.path.exists(filename):
-            os.startfile(filename)
+        try:
+            output_filename = "output.xlsx"
+            filename = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel files", "*.xlsx")])
+            if filename:
+                df = pd.read_excel(output_filename)
+                df.to_excel(filename, index=False)
+                self.status_label["text"] = "File saved"
+                os.remove(output_filename)  # delete the temporary output file
+        except Exception as e:
+            self.status_label["text"] = f"Error: {str(e)}"
 
 
 root = tk.Tk()
