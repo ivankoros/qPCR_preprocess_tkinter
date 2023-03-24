@@ -113,30 +113,40 @@ class Application(tk.Frame):
             df = df.reset_index(drop=True)
 
             # Save output to file
-            output_filename = "output.xlsx"
-            df.to_excel(output_filename, index=False)
 
             # Update UI
             self.status_label["text"] = "Done"
+            self.df = df
             self.download_button["state"] = "normal"
 
         except Exception as e:
             self.status_label["text"] = f"Error: {str(e)}"
+            self.df = None
 
     def download_output_file(self):
         try:
-            output_filename = "output.xlsx"
-            filename = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel files", "*.xlsx")])
-            if filename:
-                df = pd.read_excel(output_filename)
-                df.to_excel(filename, index=False)
-                self.status_label["text"] = "File saved"
-                os.remove(output_filename)  # delete the temporary output file
+            if self.df is not None:
+                filename = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel files", "*.xlsx")])
+                if filename:
+                    self.df.to_excel(filename, index=False)
+                    self.status_label["text"] = "File saved"
+
+                    # Clear files and reset buttons
+                    self.sample1_filename = None
+                    self.sample2_filename = None
+                    self.df = None
+                    self.upload1_button["text"] = "Upload raw data"
+                    self.upload2_button["text"] = "Upload diagram"
+                    self.download_button["state"] = "disabled"
+                else:
+                    self.status_label["text"] = "Download canceled"
+            else:
+                self.status_label["text"] = "Error: No data to download"
         except Exception as e:
             self.status_label["text"] = f"Error: {str(e)}"
 
 
 root = tk.Tk()
-root.geometry("250x150")
+root.geometry("400x150")
 app = Application(master=root)
 app.mainloop()
