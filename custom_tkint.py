@@ -8,117 +8,128 @@ import os
 
 
 # Browse and upload files
-def browse_files(entry_type, raw_sample, raw_sample_diagram):
-
+def browse_files(entry_type, self):
     filepath = filedialog.askopenfilename(filetypes=(("Excel files", "*.xlsx;*.xls"), ("All files", "*.*")))
 
     if filepath and is_excel(filepath):
         if entry_type == "raw":
-            raw_sample.set(filepath)
-            raw_sample_df = pd.read_excel(raw_sample.get())
-            message, color, bool_result_raw = dimension_validation(raw_sample_df, 96, 16)
-            raw_status_label.configure(text=message, fg_color=color)
+            self.raw_sample = filepath
+            self.raw_sample_df = pd.read_excel(self.raw_sample)
+            message, color, bool_result_raw = dimension_validation(self.raw_sample_df, 96, 16)
+            self.raw_status_label.configure(text=message, fg_color=color)
 
         elif entry_type == "diagram":
-            raw_sample_diagram.set(filepath)
-            raw_sample_diagram_df = pd.read_excel(raw_sample_diagram.get())
-            message, color, bool_result_diagram = dimension_validation(raw_sample_diagram_df, 8, 13)
-            diagram_status_label.configure(text=message, fg_color=color)
+            self.raw_sample_diagram = filepath
+            self.raw_sample_diagram_df = pd.read_excel(self.raw_sample_diagram)
+            message, color, bool_result_diagram = dimension_validation(self.raw_sample_diagram_df, 8, 13)
+            self.diagram_status_label.configure(text=message, fg_color=color)
 
     elif filepath:
         showerror("Invalid file type", "Please select Excel files (.xls or .xlsx) only.")
 
-def upload_files(raw_sample_df, raw_sample_diagram_df):
 
-    global output_df
+def upload_files(self):
 
-    if raw_sample_df is None or raw_sample_diagram_df is None:
-        print(f"raw_sample_df: {raw_sample_df}, raw_sample_diagram_df: {raw_sample_diagram_df}")
+    if self.raw_sample_df is None or self.raw_sample_diagram_df is None:
+        print(f"raw_sample_df: {self.raw_sample_df}, raw_sample_diagram_df: {self.raw_sample_diagram_df}")
         return
-    output_df, st_dev_warnings = upload_files_preprocessing(raw_sample_df, raw_sample_diagram_df)
+    output_df, st_dev_warnings = upload_files_preprocessing(self.raw_sample_df, self.raw_sample_diagram_df)
 
-    download_button.configure(state="normal", text="Output file ready for download")
+    self.download_button.configure(state="normal", text="Output file ready for download")
 
     print(st_dev_warnings)
 
-    return output_df, st_dev_warnings
+    self.output_df = output_df
+    self.st_dev_warnings = st_dev_warnings
 
 
-def download_file():
-    if output_df is not None:
+def download_file(self):
+    print(f"Download button clicked, output_df is: {self.output_df}")
+
+    if self.output_df is not None:
         filename = filedialog.asksaveasfilename(defaultextension=".xlsx",
                                                 filetypes=[("Excel files", "*.xlsx")])
+
         if filename:
-            output_df.to_excel(filename, index=False)
+            self.output_df.to_excel(filename, index=False)
             os.startfile(filename)
 
             # Reset components to their default state
-            raw_sample.set("")
-            raw_sample_diagram.set("")
-            raw_status_label.configure(text="", fg_color="transparent")
-            diagram_status_label.configure(text="", fg_color="transparent")
-            download_button.configure(state="disabled", text="Download")
+            self.raw_sample = ""
+            self.raw_sample_diagram = ""
+            self.raw_status_label.configure(text="", fg_color="transparent")
+            self.diagram_status_label.configure(text="", fg_color="transparent")
+            self.download_button.configure(state="disabled", text="Download")
+
+
 
 # Custom tkinter window initialization
-window = ctk.CTk()
-window.title("Custom Tkinter")
-window.geometry("400x400")
+class App(ctk.CTk):
 
-# Main label widget
-label = ctk.CTkLabel(window,
-                     text="Preprocessing",
-                     font=("Arial", 20, "bold"),
-                     width=20,
-                     corner_radius=10)
-label.pack(padx=10, pady=15, side="top", anchor="center")
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.title("Custom Tkinter")
+        self.geometry("400x400")
+
+        # Main label widget
+        self.label = ctk.CTkLabel(self,
+                                  text="Preprocessing",
+                                  font=("Arial", 20, "bold"),
+                                  width=20,
+                                  corner_radius=10)
+        self.label.pack(padx=10, pady=15, side="top", anchor="center")
+
+        # Frame for the browse file buttons and their status labels
+        self.frame = ctk.CTkFrame(self, fg_color="transparent", bg_color="transparent")
+        self.frame.pack(pady=10, side="top", anchor="center")
+
+        # Diagram status labels (valid or not), hidden by default until file uploaded
+        self.diagram_status_label = ctk.CTkLabel(self.frame, text="", width=10, height=1)
+        self.diagram_status_label.grid(row=1, column=1, pady=10)
+
+        self.raw_status_label = ctk.CTkLabel(self.frame, text="", width=10, height=1)
+        self.raw_status_label.grid(row=1, column=0, pady=10)
+
+        self.raw_sample = ""
+        self.raw_sample_diagram = ""
+        self.raw_sample_df = None
+        self.raw_sample_diagram_df = None
+        self.output_df = None
+        self.st_dev_warnings = None
+        self.output_df = None
+
+        # File upload browse buttons
+        self.raw_browse_button = ctk.CTkButton(self.frame,
+                                               text="Upload raw sample file",
+                                               command=lambda: browse_files("raw", self))
+
+        self.raw_browse_button.grid(row=0, column=0, padx=10)
+
+        self.diagram_browse_button = ctk.CTkButton(self.frame,
+                                                   text="Upload plate diagram",
+                                                   command=lambda: browse_files("diagram", self))
+
+        self.diagram_browse_button.grid(row=0, column=1, padx=10)
+
+        # Download file button, default disabled
+        self.download_button = ctk.CTkButton(self,
+                                             text="Download",
+                                             command=lambda: download_file(self),
+                                             state="disabled")
+
+        self.download_button.pack(pady=(10, 20), side="bottom", anchor="center")
+
+        # File upload button, disabled by default until both files uploaded
+        self.upload_button = ctk.CTkButton(self,
+                                           text="Upload",
+                                           command=lambda: upload_files(self))
+
+        self.upload_button.pack(pady=10, side="bottom", anchor="center")
+
+        # Main loop
+        self.mainloop()
 
 
-# Frame for the browse file buttons and their status labels
-frame = ctk.CTkFrame(window, fg_color="transparent", bg_color="transparent")
-frame.pack(pady=10, side="top", anchor="center")
-
-
-# Diagram status labels (valid or not), hidden by default until file uploaded
-diagram_status_label = ctk.CTkLabel(frame, text="", width=10, height=1)
-diagram_status_label.grid(row=1, column=1, pady=10)
-
-raw_status_label = ctk.CTkLabel(frame, text="", width=10, height=1)
-raw_status_label.grid(row=1, column=0, pady=10)
-
-raw_sample = tk.StringVar()
-raw_sample_diagram = tk.StringVar()
-raw_sample_df = None
-raw_sample_diagram_df = None
-
-# File upload browse buttons
-raw_browse_button = ctk.CTkButton(frame,
-                                  text="Upload raw sample file",
-                                  command=lambda: browse_files("raw", raw_sample, raw_sample_diagram))
-
-raw_browse_button.grid(row=0, column=0, padx=10)
-
-diagram_browse_button = ctk.CTkButton(frame,
-                                      text="Upload plate diagram",
-                                      command=lambda: browse_files("diagram", raw_sample, raw_sample_diagram))
-
-diagram_browse_button.grid(row=0, column=1, padx=10)
-
-# Download file button, default disabled
-download_button = ctk.CTkButton(window,
-                                text="Download",
-                                command=download_file,
-                                state="disabled")
-
-download_button.pack(pady=(10, 20), side="bottom", anchor="center")
-
-
-# File upload button, disabled by default until both files uploaded
-upload_button = ctk.CTkButton(window,
-                              text="Upload",
-                              command=lambda: upload_files(pd.read_excel(raw_sample.get()), pd.read_excel(raw_sample_diagram.get())))
-
-
-upload_button.pack(side="bottom", anchor="center")
-
-# Run the window
-window.mainloop()
+if __name__ == "__main__":
+    app = App()
