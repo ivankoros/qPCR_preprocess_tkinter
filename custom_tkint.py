@@ -1,31 +1,26 @@
 import customtkinter as ctk
-import os
 import pandas as pd
 import tkinter as tk
-import numpy as np
 from tkinter import filedialog
 from tkinter.messagebox import showerror
+from functions import *
+
 
 raw_sample = ""
 raw_sample_diagram = ""
 
-
-def is_excel(filename):
-    return filename.lower().endswith(('.xls', '.xlsx'))
-
-
+# Browse and upload files
 def browse_files(entry_type):
-    global raw_sample, raw_sample_diagram
     filepath = filedialog.askopenfilename(filetypes=(("Excel files", "*.xlsx;*.xls"), ("All files", "*.*")))
     if filepath and is_excel(filepath):
         if entry_type == "raw":
-            raw_sample = filepath
+            raw_sample: str = filepath
             if "T1000" in filepath:
                 raw_status_label.configure(text="✓ Looks good", fg_color="green")
             else:
                 raw_status_label.configure(text="✗ Should be 83 x 19, is 32 x 15", fg_color="red")
         elif entry_type == "diagram":
-            raw_sample_diagram = filepath
+            raw_sample_diagram: str = filepath
             if "T1000" in filepath:
                 diagram_status_label.configure(text="✓ Looks good", fg_color="green")
             else:
@@ -41,11 +36,6 @@ def browse_files(entry_type):
 
 
 def upload_files():
-    global raw_sample, raw_sample_diagram
-
-    if not is_excel(raw_sample) or not is_excel(raw_sample_diagram):
-        showerror("Invalid file type", "Please select Excel files (.xls or .xlsx) only.")
-        return
 
     # Read data
     df_data = pd.read_excel(raw_sample, sheet_name=0)
@@ -56,21 +46,23 @@ def upload_files():
     # Activate download button
     download_button.configure(state="normal")
 
+    return raw_sample, raw_sample_diagram
+
 
 def download_file():
-        #TODO add the download code
-    #Download output file given name from choose ptompt
 
-
+    # TODO add the download code
+    # Download output file given name from choose prompt
     # Open the file
-    #os.startfile("")
 
+    pass
 
+# Custom tkinter window initialization
 window = ctk.CTk()
 window.title("Custom Tkinter")
 window.geometry("400x400")
 
-# Widgets
+# Main label widget
 label = ctk.CTkLabel(window,
                      text="Preprocessing",
                      font=("Arial", 20, "bold"),
@@ -78,11 +70,13 @@ label = ctk.CTkLabel(window,
                      corner_radius=10)
 label.pack(padx=10, pady=15, side="top", anchor="center")
 
+
+# Frame for the browse file buttons and their status labels
 frame = ctk.CTkFrame(window, fg_color="transparent", bg_color="transparent")
 frame.pack(pady=10, side="top", anchor="center")
 
 
-# Diagram labels
+# Diagram status labels (valid or not), hidden by default until file uploaded
 diagram_status_label = ctk.CTkLabel(frame, text="", width=10, height=1)
 diagram_status_label.grid(row=1, column=1, pady=10)
 
@@ -100,6 +94,7 @@ diagram_browse_button = ctk.CTkButton(frame,
                                       command=lambda: browse_files("diagram"))
 diagram_browse_button.grid(row=0, column=1, padx=10)
 
+# Download file button, default disabled
 download_button = ctk.CTkButton(window,
                                 text="Download",
                                 command=download_file,
@@ -107,11 +102,13 @@ download_button = ctk.CTkButton(window,
 
 download_button.pack(pady=10, side="bottom", anchor="center")
 
+# File upload button, disabled by default until both files uploaded
 upload_button = ctk.CTkButton(window,
                               text="Upload",
                               state="disabled",
                               command=upload_files)
+
 upload_button.pack(side="bottom", anchor="center")
 
-
+# Run the window
 window.mainloop()
