@@ -184,3 +184,4 @@ pyrightconfig.json
 /data/
 /output/
 /build/
+/build/main/

@@ -1,7 +1,5 @@
 import pandas as pd
 import numpy as np
-from main import Application
-
 
 def is_excel(filename):
     return filename.lower().endswith(('.xls', '.xlsx'))
