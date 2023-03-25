@@ -1,155 +1,135 @@
+import customtkinter as ctk
+import pandas as pd
 import tkinter as tk
 from tkinter import filedialog
+from tkinter.messagebox import showerror
+from functions import *
 import os
-import numpy as np
-import pandas as pd
-import re
+
+
+# Browse and upload files
+def browse_files(entry_type, self):
+    filepath = filedialog.askopenfilename(filetypes=(("Excel files", "*.xlsx;*.xls"), ("All files", "*.*")))
+
+    if filepath and is_excel(filepath):
+        if entry_type == "raw":
+            self.raw_sample = filepath
+            self.raw_sample_df = pd.read_excel(self.raw_sample)
+            message, color, bool_result_raw = dimension_validation(self.raw_sample_df, 96, 16)
+            self.raw_status_label.configure(text=message, fg_color=color)
+
+        elif entry_type == "diagram":
+            self.raw_sample_diagram = filepath
+            self.raw_sample_diagram_df = pd.read_excel(self.raw_sample_diagram)
+            message, color, bool_result_diagram = dimension_validation(self.raw_sample_diagram_df, 8, 13)
+            self.diagram_status_label.configure(text=message, fg_color=color)
+
+    elif filepath:
+        showerror("Invalid file type", "Please select Excel files (.xls or .xlsx) only.")
+
+
+def upload_files(self):
+
+    if self.raw_sample_df is None or self.raw_sample_diagram_df is None:
+        print(f"raw_sample_df: {self.raw_sample_df}, raw_sample_diagram_df: {self.raw_sample_diagram_df}")
+        return
+    output_df, st_dev_warnings = upload_files_preprocessing(self.raw_sample_df, self.raw_sample_diagram_df)
+
+    self.download_button.configure(state="normal", text="Output file ready for download")
+
+    print(st_dev_warnings)
+
+    self.output_df = output_df
+    self.st_dev_warnings = st_dev_warnings
+
+
+def download_file(self):
+    print(f"Download button clicked, output_df is: {self.output_df}")
+
+    if self.output_df is not None:
+        filename = filedialog.asksaveasfilename(defaultextension=".xlsx",
+                                                filetypes=[("Excel files", "*.xlsx")])
+
+        if filename:
+            self.output_df.to_excel(filename, index=False)
+            os.startfile(filename)
+
+            # Reset components to their default state
+            self.raw_sample = ""
+            self.raw_sample_diagram = ""
+            self.raw_status_label.configure(text="", fg_color="transparent")
+            self.diagram_status_label.configure(text="", fg_color="transparent")
+            self.download_button.configure(state="disabled", text="Download")
 
 
 
-class Application(tk.Frame):
-    def __init__(self, master=None):
-        super().__init__(master)
-        self.master = master
-        self.pack()
-        self.create_widgets()
+# Custom tkinter window initialization
+class App(ctk.CTk):
 
-    def create_widgets(self):
-        self.upload1_button = tk.Button(self)
-        self.upload1_button["text"] = "Upload raw data"
-        self.upload1_button["command"] = self.upload_sample1_file
-        self.upload1_button.pack()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        self.upload2_button = tk.Button(self)
-        self.upload2_button["text"] = "Upload diagram"
-        self.upload2_button["command"] = self.upload_sample2_file
-        self.upload2_button.pack()
+        self.title("Custom Tkinter")
+        self.geometry("400x400")
 
-        self.submit_button = tk.Button(self)
-        self.submit_button["text"] = "Submit"
-        self.submit_button["command"] = self.run_script
-        self.submit_button.pack()
+        # Main label widget
+        self.label = ctk.CTkLabel(self,
+                                  text="Preprocessing",
+                                  font=("Arial", 20, "bold"),
+                                  width=20,
+                                  corner_radius=10)
+        self.label.pack(padx=10, pady=15, side="top", anchor="center")
 
-        self.status_label = tk.Label(self)
-        self.status_label.pack()
+        # Frame for the browse file buttons and their status labels
+        self.frame = ctk.CTkFrame(self, fg_color="transparent", bg_color="transparent")
+        self.frame.pack(pady=10, side="top", anchor="center")
 
-        self.download_button = tk.Button(self)
-        self.download_button["text"] = "Download Output File"
-        self.download_button["state"] = "disabled"
-        self.download_button["command"] = self.download_output_file
-        self.download_button.pack()
+        # Diagram status labels (valid or not), hidden by default until file uploaded
+        self.diagram_status_label = ctk.CTkLabel(self.frame, text="", width=10, height=1)
+        self.diagram_status_label.grid(row=1, column=1, pady=10)
 
-    def upload_sample1_file(self):
-        filename = filedialog.askopenfilename()
-        self.sample1_filename = filename
-        if self.sample1_filename:
-            self.upload1_button["text"] = self.sample1_filename
+        self.raw_status_label = ctk.CTkLabel(self.frame, text="", width=10, height=1)
+        self.raw_status_label.grid(row=1, column=0, pady=10)
 
-    def upload_sample2_file(self):
-        filename = filedialog.askopenfilename()
-        self.sample2_filename = filename
-        if self.sample2_filename:
-            self.upload2_button["text"] = self.sample2_filename
+        self.raw_sample = ""
+        self.raw_sample_diagram = ""
+        self.raw_sample_df = None
+        self.raw_sample_diagram_df = None
+        self.output_df = None
+        self.st_dev_warnings = None
+        self.output_df = None
 
+        # File upload browse buttons
+        self.raw_browse_button = ctk.CTkButton(self.frame,
+                                               text="Upload raw sample file",
+                                               command=lambda: browse_files("raw", self))
 
-    def run_script(self):
-        try:
-            # Assign raw data and plate diagram files from user input
-            RAW_SAMPLE_1 = self.sample1_filename
-            RAW_SAMPLE_1_DIAGRAM = self.sample2_filename
+        self.raw_browse_button.grid(row=0, column=0, padx=10)
 
-            # Read in the raw data and plate diagram as pandas dataframes
-            df_data = pd.read_excel(RAW_SAMPLE_1, sheet_name=0)
-            df_diagram = pd.read_excel(RAW_SAMPLE_1_DIAGRAM)
+        self.diagram_browse_button = ctk.CTkButton(self.frame,
+                                                   text="Upload plate diagram",
+                                                   command=lambda: browse_files("diagram", self))
 
-            # Set the first column as the index, remove whitespace and add a space to the "dup" values
-            df_diagram = df_diagram.set_index(df_diagram.columns[0])
-            df_diagram = df_diagram.replace('\s+', '', regex=True)
-            df_diagram = df_diagram.replace('dup', ' dup', regex=True)
+        self.diagram_browse_button.grid(row=0, column=1, padx=10)
 
-            # Use the rows and columns (besides the first one) of the plate diagram to create a dictionary of
-            # corresponding Sample and Well IDs
-            sample_map = {}
+        # Download file button, default disabled
+        self.download_button = ctk.CTkButton(self,
+                                             text="Download",
+                                             command=lambda: download_file(self),
+                                             state="disabled")
 
-            for row in df_diagram.index:
-                for col in df_diagram.columns[1:]:
-                    well_id = f"{row}{int(col):02d}"
-                    sample_name = df_diagram.loc[row, col]
-                    sample_map[well_id] = sample_name
+        self.download_button.pack(pady=(10, 20), side="bottom", anchor="center")
 
-            # Read in the raw qPCR data and map the well IDs to sample names using the dictionary
-            df_data["Sample"] = df_data["Well"].map(sample_map)
+        # File upload button, disabled by default until both files uploaded
+        self.upload_button = ctk.CTkButton(self,
+                                           text="Upload",
+                                           command=lambda: upload_files(self))
 
-            df = df_data[['Well', 'Cq', 'Sample']].copy()
+        self.upload_button.pack(pady=10, side="bottom", anchor="center")
 
-            df['mtDNA1'] = "mtDNA1"
-            df['mtDNA2'] = "mtDNA2"
-
-            df = df.loc[:,["Well", "Sample", "mtDNA1", "mtDNA2", "Cq"]]
-
-            df = df.dropna()
-
-            # set mtDNA1 and mtDNA2 values to Cq values by treating mtDNA1 as the Cq for the first sample and mtDNA2
-            # as the Cq for the duplicate sample if it exists as "Sample dup"
-
-            for row, index in df.iterrows():
-                df.loc[row, 'mtDNA1'] = df.loc[row, 'Cq']
-                if df.loc[row, 'Sample'] + ' dup' in df['Sample'].values:
-                    df.loc[row, 'mtDNA2'] = df.loc[df['Sample'] == df.loc[row, 'Sample'] + ' dup', 'Cq'].values[0]
-                else:
-                    df.loc[row, 'mtDNA2'] = np.NAN
-
-            df = df.drop(columns=['Cq'])
-            df = df.dropna()
-
-            # Calculate standard deviation
-            df['St.Dev'] = df[['mtDNA1', 'mtDNA2']].std(axis=1)
-
-            for row, index in df.iterrows():
-                if df.loc[row, 'St.Dev'] > .22:
-                    print(
-                        f"\n Warning: Standard deviation for {df.loc[row, 'Sample']} is {round(df.loc[row, 'St.Dev'], ndigits=3)} "
-                        f"(Sample 1: {round(df.loc[row, 'mtDNA1'], ndigits=3)} vs Sample 2: {round(df.loc[row, 'mtDNA2'], ndigits=2)}) \n")
-
-            df = df.sort_values(by=['St.Dev'], ascending=False)
-            df = df.reset_index(drop=True)
-
-            # Save output to file
-
-            # Update UI
-            self.status_label["text"] = "Done"
-            self.df = df
-            self.download_button["state"] = "normal"
-
-        except Exception as e:
-            self.status_label["text"] = f"Error: {str(e)}"
-            self.df = None
-
-    def download_output_file(self):
-        try:
-            if self.df is not None:
-                filename = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel files", "*.xlsx")])
-                if filename:
-                    self.df.to_excel(filename, index=False)
-                    self.status_label["text"] = "File saved"
-
-                    # Clear files and reset buttons
-                    self.sample1_filename = None
-                    self.sample2_filename = None
-                    self.df = None
-                    self.upload1_button["text"] = "Upload raw data"
-                    self.upload2_button["text"] = "Upload diagram"
-                    self.download_button["state"] = "disabled"
-                else:
-                    self.status_label["text"] = "Download canceled"
-            else:
-                self.status_label["text"] = "Error: No data to download"
-        except Exception as e:
-            self.status_label["text"] = f"Error: {str(e)}"
+        # Main loop
+        self.mainloop()
 
 
-root = tk.Tk()
-root.geometry("400x150")
-app = Application(master=root)
-root.configure(bg="blue")
-app.mainloop()
+if __name__ == "__main__":
+    app = App()
