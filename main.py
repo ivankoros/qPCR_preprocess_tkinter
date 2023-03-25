@@ -149,4 +149,5 @@ class Application(tk.Frame):
 root = tk.Tk()
 root.geometry("400x150")
 app = Application(master=root)
+root.configure(bg="blue")
 app.mainloop()
