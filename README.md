@@ -6,5 +6,5 @@
  - Pandas reading, wrangling. analysis, and writing
 
 ### Current State
-![Animation](qPCR tkinter gif.gif)
+![Animation](qPCR_tkinter_animation.gif)
 
