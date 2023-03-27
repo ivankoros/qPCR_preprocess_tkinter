@@ -134,7 +134,7 @@ def stdev_warnings(combined_df):
     return warnings_list
 
 
-def update_log_text(self, text):
+def update_log_text(self, text, color="white"):
     """Update the log text box with the given text
 
     This code creates a timestamp, changes the text box to be editable,
@@ -145,10 +145,12 @@ def update_log_text(self, text):
 
     I put the timestamp in here instead of when I call it because this creates more clean code.
 
+    If the color is specified, it uses that color for the text
+
     :param self: the app class which has the log_text attribute
     :param text: the text to be inserted into the log_text, specified when I call it
     """
-    timestamp = time.strftime("%I:%M %p %m/%d")
+    timestamp = time.strftime("%m/%d @ %H:%M")  # timestamp format: 02/12 @ 13:42
     self.log_text.configure(state="normal")
-    self.log_text.insert("end", f'({timestamp}) {text} + "\n"')
+    self.log_text.insert("end", f'({timestamp}) {text} \n', color)
     self.log_text.configure(state="disabled")

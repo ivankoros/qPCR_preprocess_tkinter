@@ -32,7 +32,7 @@ def browse_files(entry_type, self):
 def upload_files(self):
     if self.raw_sample_df is None or self.raw_sample_diagram_df is None:
         timestamp = time.strftime("%H:%M @ %m/%d")
-        update_log_text(self, f"({timestamp}): Error: Files not uploaded")
+        update_log_text(self, "Error: Files not uploaded", "red")
         return
     output_df, st_dev_warnings = upload_files_preprocessing(self.raw_sample_df, self.raw_sample_diagram_df)
 
@@ -92,7 +92,7 @@ class App(ctk.CTk):
                                        font=("Arial", 10))
         self.log_text.pack(fill="both", expand=True, side="top", padx=10, pady=5)
 
-        update_log_text(self, f"({time.strftime('%H:%M:%S')}) Log started")
+        update_log_text(self, "Log started")
 
         # Main label widget
         self.label = ctk.CTkLabel(self,
