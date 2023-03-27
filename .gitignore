@@ -185,3 +185,7 @@ pyrightconfig.json
 /output/
 /build/
 /build/main/
+/old_tkinter_ui/qPCR Initial ProcessingOLD.exe
+/batch_files/u_m_qPCR_pre.bat
+/batch_files/pyinstaller_qPCR_tkinter.txt
+/old_tkinter_ui/main.py
