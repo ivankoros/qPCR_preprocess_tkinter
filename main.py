@@ -31,7 +31,8 @@ def browse_files(entry_type, self):
 
 def upload_files(self):
     if self.raw_sample_df is None or self.raw_sample_diagram_df is None:
-        print(f"raw_sample_df: {self.raw_sample_df}, raw_sample_diagram_df: {self.raw_sample_diagram_df}")
+        timestamp = time.strftime("%H:%M @ %m/%d")
+        update_log_text(self, f"({timestamp}): Error: Files not uploaded")
         return
     output_df, st_dev_warnings = upload_files_preprocessing(self.raw_sample_df, self.raw_sample_diagram_df)
 
@@ -69,7 +70,7 @@ class App(ctk.CTk):
         super().__init__(*args, **kwargs)
 
         self.title("Custom Tkinter")
-        self.geometry("600x400")
+        self.geometry("700x400")
 
         # Right-side log section
         self.log_section = ctk.CTkFrame(self,
@@ -81,15 +82,14 @@ class App(ctk.CTk):
         self.log_title = ctk.CTkLabel(self.log_section,
                                       text="Log",
                                       font=("Arial", 20, "bold"),
-                                      width=200)
+                                      width=250)
         self.log_title.pack(padx=10, pady=15, side="top")
 
-        self.log_text = tk.Text(self.log_section,
-                                width=1,
-                                height=20,
-                                state="disabled",
-                                bg="white",
-                                font=("Arial", 10))
+        self.log_text = ctk.CTkTextbox(self.log_section,
+                                       width=40,
+                                       height=20,
+                                       bg_color="transparent",
+                                       font=("Arial", 10))
         self.log_text.pack(fill="both", expand=True, side="top", padx=10, pady=5)
 
         update_log_text(self, f"({time.strftime('%H:%M:%S')}) Log started")

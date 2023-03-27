@@ -134,6 +134,6 @@ def stdev_warnings(combined_df):
 
 
 def update_log_text(self, text):
-    self.log_text.config(state="normal")
+    self.log_text.configure(state="normal")
     self.log_text.insert("end", text + "\n")
-    self.log_text.config(state="disabled")
+    self.log_text.configure(state="disabled")
