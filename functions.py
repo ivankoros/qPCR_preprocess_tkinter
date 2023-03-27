@@ -131,3 +131,9 @@ def stdev_warnings(combined_df):
                 f"(Sample 1: {round(df.loc[row, 'mtDNA1'], ndigits=3)} vs Sample 2: {round(df.loc[row, 'mtDNA2'], ndigits=2)})")
 
     return warnings_list
+
+
+def update_log_text(self, text):
+    self.log_text.config(state="normal")
+    self.log_text.insert("end", text + "\n")
+    self.log_text.config(state="disabled")

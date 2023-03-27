@@ -5,6 +5,7 @@ from tkinter import filedialog
 from tkinter.messagebox import showerror
 from functions import *
 import os
+import time
 
 
 # Browse and upload files
@@ -29,7 +30,6 @@ def browse_files(entry_type, self):
 
 
 def upload_files(self):
-
     if self.raw_sample_df is None or self.raw_sample_diagram_df is None:
         print(f"raw_sample_df: {self.raw_sample_df}, raw_sample_diagram_df: {self.raw_sample_diagram_df}")
         return
@@ -62,7 +62,6 @@ def download_file(self):
             self.download_button.configure(state="disabled", text="Download")
 
 
-
 # Custom tkinter window initialization
 class App(ctk.CTk):
 
@@ -70,7 +69,30 @@ class App(ctk.CTk):
         super().__init__(*args, **kwargs)
 
         self.title("Custom Tkinter")
-        self.geometry("400x400")
+        self.geometry("600x400")
+
+        # Right-side log section
+        self.log_section = ctk.CTkFrame(self,
+                                        width=180,
+                                        height=400)
+        self.log_section.pack(side="right", fill="y", expand=False)
+
+        # Log section title
+        self.log_title = ctk.CTkLabel(self.log_section,
+                                      text="Log",
+                                      font=("Arial", 20, "bold"),
+                                      width=200)
+        self.log_title.pack(padx=10, pady=15, side="top")
+
+        self.log_text = tk.Text(self.log_section,
+                                width=1,
+                                height=20,
+                                state="disabled",
+                                bg="white",
+                                font=("Arial", 10))
+        self.log_text.pack(fill="both", expand=True, side="top", padx=10, pady=5)
+
+        update_log_text(self, f"({time.strftime('%H:%M:%S')}) Log started")
 
         # Main label widget
         self.label = ctk.CTkLabel(self,
@@ -96,7 +118,7 @@ class App(ctk.CTk):
         self.raw_sample_df = None
         self.raw_sample_diagram_df = None
         self.output_df = None
-        self.st_dev_warnings = None
+        self.st_dev_warnings = []
         self.output_df = None
 
         # File upload browse buttons
