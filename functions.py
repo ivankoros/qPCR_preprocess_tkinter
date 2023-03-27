@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import time
 
 def is_excel(filename):
     return filename.lower().endswith(('.xls', '.xlsx'))
@@ -134,6 +135,20 @@ def stdev_warnings(combined_df):
 
 
 def update_log_text(self, text):
+    """Update the log text box with the given text
+
+    This code creates a timestamp, changes the text box to be editable,
+     inserts the text, and then changes the text box to be uneditable.
+
+     It changes its mutability because it needs to be editable for me to insert the text.
+        However, I don't want the user to be able to edit the text.
+
+    I put the timestamp in here instead of when I call it because this creates more clean code.
+
+    :param self: the app class which has the log_text attribute
+    :param text: the text to be inserted into the log_text, specified when I call it
+    """
+    timestamp = time.strftime("%I:%M %p %m/%d")
     self.log_text.configure(state="normal")
-    self.log_text.insert("end", text + "\n")
+    self.log_text.insert("end", f'({timestamp}) {text} + "\n"')
     self.log_text.configure(state="disabled")
