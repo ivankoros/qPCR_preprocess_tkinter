@@ -134,7 +134,7 @@ def stdev_warnings(combined_df):
     return warnings_list
 
 
-def update_log_text(self, text, color="white"):
+def update_log_text(self, text):
     """Update the log text box with the given text
 
     This code creates a timestamp, changes the text box to be editable,
@@ -152,5 +152,5 @@ def update_log_text(self, text, color="white"):
     """
     timestamp = time.strftime("%m/%d @ %H:%M")  # timestamp format: 02/12 @ 13:42
     self.log_text.configure(state="normal")
-    self.log_text.insert("end", f'({timestamp}) {text} \n', color)
+    self.log_text.insert("end", f'({timestamp}) {text} \n')
     self.log_text.configure(state="disabled")

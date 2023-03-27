@@ -18,12 +18,14 @@ def browse_files(entry_type, self):
             self.raw_sample_df = pd.read_excel(self.raw_sample)
             message, color, bool_result_raw = dimension_validation(self.raw_sample_df, 96, 16)
             self.raw_status_label.configure(text=message, fg_color=color)
+            update_log_text(self, f"{os.path.basename(filepath)} uploaded")
 
         elif entry_type == "diagram":
             self.raw_sample_diagram = filepath
             self.raw_sample_diagram_df = pd.read_excel(self.raw_sample_diagram)
             message, color, bool_result_diagram = dimension_validation(self.raw_sample_diagram_df, 8, 13)
             self.diagram_status_label.configure(text=message, fg_color=color)
+            update_log_text(self, f"{os.path.basename(filepath)} uploaded")
 
     elif filepath:
         showerror("Invalid file type", "Please select Excel files (.xls or .xlsx) only.")
@@ -32,13 +34,20 @@ def browse_files(entry_type, self):
 def upload_files(self):
     if self.raw_sample_df is None or self.raw_sample_diagram_df is None:
         timestamp = time.strftime("%H:%M @ %m/%d")
-        update_log_text(self, "Error: Files not uploaded", "red")
+        update_log_text(self, "Error: Files not uploaded")
         return
+
+    update_log_text(self, f"Files successfully uploaded")
+
     output_df, st_dev_warnings = upload_files_preprocessing(self.raw_sample_df, self.raw_sample_diagram_df)
+    update_log_text(self, f"Files processed and preapred for download")
 
     self.download_button.configure(state="normal", text="Output file ready for download")
 
-    print(st_dev_warnings)
+
+
+    for x in st_dev_warnings:
+        update_log_text(self, f"{x}")
 
     self.output_df = output_df
     self.st_dev_warnings = st_dev_warnings
@@ -83,11 +92,9 @@ class App(ctk.CTk):
                                       text="Log",
                                       font=("Arial", 20, "bold"),
                                       width=250)
-        self.log_title.pack(padx=10, pady=15, side="top")
+        self.log_title.pack(padx=0, pady=(15,5), side="top")
 
         self.log_text = ctk.CTkTextbox(self.log_section,
-                                       width=40,
-                                       height=20,
                                        bg_color="transparent",
                                        font=("Arial", 10))
         self.log_text.pack(fill="both", expand=True, side="top", padx=10, pady=5)
@@ -140,7 +147,7 @@ class App(ctk.CTk):
                                              command=lambda: download_file(self),
                                              state="disabled")
 
-        self.download_button.pack(pady=(10, 20), side="bottom", anchor="center")
+        self.download_button.pack(pady=(0, 15), side="bottom", anchor="center")
 
         # File upload button, disabled by default until both files uploaded
         self.upload_button = ctk.CTkButton(self,
