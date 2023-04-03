@@ -128,8 +128,8 @@ def stdev_warnings(combined_df):
     for row, index in df.iterrows():
         if df.loc[row, 'St.Dev'] > .22:
             warnings_list.append(
-                f"Warning: Standard deviation for {df.loc[row, 'Sample']} is {round(df.loc[row, 'St.Dev'], ndigits=3)} "
-                f"(Sample 1: {round(df.loc[row, 'mtDNA1'], ndigits=3)} vs Sample 2: {round(df.loc[row, 'mtDNA2'], ndigits=2)})")
+                f"Warning: Standard deviation for {df.loc[row, 'Sample']} is {round(df.loc[row, 'St.Dev'], ndigits=3)}")
+                #f"(Sample 1: {round(df.loc[row, 'mtDNA1'], ndigits=3)} vs Sample 2: {round(df.loc[row, 'mtDNA2'], ndigits=2)})")
 
     return warnings_list
 

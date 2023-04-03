@@ -189,3 +189,4 @@ pyrightconfig.json
 /batch_files/u_m_qPCR_pre.bat
 /batch_files/pyinstaller_qPCR_tkinter.txt
 /old_tkinter_ui/main.py
+/batch_files/pyinstaller_qPCR_tkinter.bat
