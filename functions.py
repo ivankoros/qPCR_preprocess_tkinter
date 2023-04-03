@@ -49,7 +49,7 @@ def upload_files_preprocessing(raw_sample_df, raw_sample_diagram_df):
     # Set the first column as the index, remove whitespace and add a space to the "dup" values
     df_diagram = df_diagram.set_index(df_diagram.columns[0])
     df_diagram = df_diagram.replace('\s+', '', regex=True)
-    df_diagram = df_diagram.replace('dup', ' dup', regex=True)
+    df_diagram = df_diagram.replace(r'(?i)dup', ' dup', regex=True)
 
     sample_map = {}
 
