@@ -1,6 +1,6 @@
-# Custom Tkinter qPCR Preprocessor
+# qPCR RadBio Preprocessor
 
-This Python project is a GUI application built with Custom Tkinter attributes that easy and flexible preprocessing and validation of of raw quantitative chain polymerase (qPCR) data straight from native BioRad software (CFX Maestro). Pandas is used as the primary tool for manipulation and and unittests is used for for input and output validation.
+This Python project is a GUI application built with Custom Tkinter attributes that easy and flexible preprocessing and validation of of raw quantitative chain polymerase (qPCR) data straight from native BioRad software (CFX Maestro). Pandas is used as the primary tool for manipulation and and unit tests is used for for input and output validation.
 
 ## Key Features
 
@@ -26,9 +26,9 @@ python main.py
 ```
 
 ## Usage
-1. Export your qPCR data directly from CFX Maestro (making sure to set your run's specific threshhold) as a .xlsx file
+1. Export your qPCR data directly from CFX Maestro (making sure to set your run's specific threshold) as a .xlsx file
   - Without any modifications, it should be 96 x 16 
-2. Draw up the schematic of your plate diagram in a seperate .xlsx file
+2. Draw up the schematic of your plate diagram in a separate .xlsx file
 
   - Using a standard 96-well plate, your diagram should be have 8 well rows as letters and 12 columns as numbers
   
@@ -41,7 +41,7 @@ python main.py
       ```
   - If you need to exclude a sample, add any text other than its name with it.
   
-    - In the example below, samples 'X95 dup' and 'X50' were both re-done during the experiment. Samples 'X95 Dup*' and 'X50 (redo)' wont be used in processing, replaced with the properly formatted samples 'X50' in cell E10 and 'X95 Dup' in F10.
+    - In the example below, samples 'X95 dup' and 'X50' were both re-done during the experiment. Samples 'X95 Dup*' and 'X50 (redo)' won't be used in processing, replaced with the properly formatted samples 'X50' in cell E10 and 'X95 Dup' in F10.
         
   |  	| 1 	| 2 	| 3 	| 4 	| 5 	| 6 	| 7 	| 8 	| 9 	| 10 	| 11 	| 12 	|
 |---	|---	|---	|---	|---	|---	|---	|---	|---	|---	|---	|---	|---	|
@@ -57,13 +57,13 @@ python main.py
  
 3. Upload the plate diagram and the raw counts file into the application
 
- - Tests will be raun against the dimensions and contents of your file to validate them and provid visual feedback
+ - Tests will be ran against the dimensions and contents of your file to validate them and provide visual feedback
  
 5. Click upload
 
-  - Make note of the logs on the right hand side, pointing to possible statisical outliers needing your manual review
+  - Make note of the logs on the right hand side, pointing to possible statistical outliers needing your manual review
   
-6. Click download to donwload your output as an .xlsx or .xls file. It will open after saving. 
+6. Click download to download your output as an .xlsx or .xls file. It will open after saving. 
 
 
 ## Animation
@@ -76,4 +76,5 @@ Pull requests are enthusiastically welcome. For major changes, please open an is
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
+
 
