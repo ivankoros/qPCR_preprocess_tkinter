@@ -10,6 +10,8 @@ import time
 
 # Browse and upload files
 def browse_files(entry_type, self):
+    # I set the prompt to 'Excel files' and only allow .xls and .xlsx files to be selected
+    # (and all files, just in case and for testing purposes)
     filepath = filedialog.askopenfilename(filetypes=(("Excel files", "*.xlsx;*.xls"), ("All files", "*.*")))
 
     if filepath and is_excel(filepath):
