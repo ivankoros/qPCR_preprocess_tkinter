@@ -4,11 +4,26 @@ This Python project is a GUI application built with Custom Tkinter attributes th
 
 ## Key Features
 
-- Seamless integration of raw sample data and plate diagram files in Excel format (.xls or .xlsx)
-- Rigorous dimension validation employing algorithms that verify input files
-- Robust data preprocessing utilizing advanced pandas DataFrame manipulation methods
-- Generation of ready-to-download output files in Excel format
+- Rapid preprocessing with Pandas of raw qPCR data and integration with your experiment-specific plate diagram layout
+- Rigorous validation for file input and results output
 - Comprehensive, real-time log display with dynamic warnings and notifications within the app
+
+## Getting Started
+
+1. Clone the repository and move into the folder
+
+```bash
+git clone https://github.com/ivankoros/qPCR_preprocess_tkinter
+cd qPCR_preprocess_tkinter
+```
+2. Install the required Python dependencies with pip
+```python
+pip install -r requirements.txt
+```
+3. Launch the main script
+```python
+python main.py
+```
 
 ## Usage
 1. Export your qPCR data directly from CFX Maestro (making sure to set your run's specific threshhold) as a .xlsx file
@@ -53,31 +68,6 @@ This Python project is a GUI application built with Custom Tkinter attributes th
 
 ## Animation
 ![](qPCR_tkinter_animation.gif)
-
-## Getting Started
-
-1. Clone the repository and move into the folder
-
-```bash
-git clone https://github.com/ivankoros/qPCR_preprocess_tkinter
-cd qPCR_preprocess_tkinter
-```
-2. Install Python dependencies with pip
-```python
-pip install -r requirements.txt
-```
-3. Launch the main script
-```python
-python main.py
-```
-## Usage
-
-1. Export your qPCR data directly from CFX Maestro (making sure to set your experiment's threshhold) as a .xlsx file
-2. Upload your plate diagram as follows:
-4. Click "Upload raw sample file" to select and upload the raw sample data file in Excel format.
-5. Click "Upload plate diagram" to select and upload the plate diagram file in Excel format.
-6. Click "Upload" to initiate the state-of-the-art preprocessing algorithm, which processes the uploaded files and prepares the output file for download.
-7. Click "Download" to save the expertly processed output file in Excel format.
 
 ## Contributing
 
