@@ -68,7 +68,7 @@ python /main_app/main.py
 
 
 ## Animation
-![](media/qPCR_tkinter_animation.gif)
+![](media/qpcr-tkinter-animation.gif)
 
 ## Contributing
 
