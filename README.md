@@ -23,7 +23,7 @@ pip install -r requirements.txt
 
 3. Launch the main script
 ```python
-python main.py
+python /main_app/main.py
 ```
 
 ## Usage
@@ -34,7 +34,7 @@ python main.py
   - Using a standard 96-well plate, your diagram should be have 8 well rows as letters and 12 columns as numbers
   
   - If you're doing duplicates, write the sample name + dup as its duplicate
-  
+
     - To do this easily in Excel or LibreCalc, use the following formula to add "dup" to an adjacent cell, replacing 'A1' with the cell you wish to target
     
       ```R

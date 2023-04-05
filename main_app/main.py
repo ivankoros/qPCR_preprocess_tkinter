@@ -1,8 +1,10 @@
 import customtkinter as ctk
 from tkinter import filedialog
 from tkinter.messagebox import showerror
-from resources.functions import *
+from resources import (update_log_text, upload_files_preprocessing,
+                       is_excel, dimension_validation)
 import os
+import pandas as pd
 import time
 
 
