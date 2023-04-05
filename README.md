@@ -37,7 +37,7 @@ python main.py
     - To do this easily in Excel or LibreCalc, use the following formula to add "dup" to an adjacent cell, replacing 'A1' with the cell you wish to target
     
       ```R
-      =IF(ISBLANK(A1),"", A11&" Dup")
+      =IF(ISBLANK(A1),"", A1&" Dup")
       ```
   - If you need to exclude a sample, add any text other than its name with it.
   
