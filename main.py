@@ -1,9 +1,7 @@
 import customtkinter as ctk
-import pandas as pd
-import tkinter as tk
 from tkinter import filedialog
 from tkinter.messagebox import showerror
-from functions import *
+from resources.functions import *
 import os
 import time
 
