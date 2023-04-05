@@ -191,3 +191,4 @@ pyrightconfig.json
 /old_tkinter_ui/main.py
 /batch_files/pyinstaller_qPCR_tkinter.bat
 /.idea/other.xml
+/tests/testfiles/output.xlsx
