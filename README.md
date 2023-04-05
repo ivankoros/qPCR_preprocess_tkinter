@@ -20,6 +20,7 @@ cd qPCR_preprocess_tkinter
 ```python
 pip install -r requirements.txt
 ```
+
 3. Launch the main script
 ```python
 python main.py
@@ -67,7 +68,7 @@ python main.py
 
 
 ## Animation
-![](qPCR_tkinter_animation.gif)
+![](media/qPCR_tkinter_animation.gif)
 
 ## Contributing
 
