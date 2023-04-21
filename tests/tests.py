@@ -1,15 +1,17 @@
 import unittest
-from io import StringIO
-import pandas as pd
-from pandas.testing import assert_frame_equal
+from unittest.mock import MagicMock, patch
+
 from resources import is_excel, dimension_validation, dup_validation, upload_files_preprocessing, stdev_warnings, \
     update_log_text
+
+from io import StringIO
+import pandas as pd
 
 
 class TestFunctions(unittest.TestCase):
 
     def test_is_excel(self):
-        """Tes if we can identify Excel files with the custom function in resources
+        """Test if we can identify Excel files with the custom function in resources
 
         On upload, the file name should be read and passed to the is_excel function.
         If the file is an Excel file, the function should return True. If the file is not an Excel file,
